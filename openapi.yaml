@@ -1,0 +1,616 @@
+openapi: 3.0.0
+info:
+  version: 1.0.0
+  title: Atlas Sports API
+
+servers:
+  - url: http://localhost:8080/api
+
+tags:
+- name: Auth
+  description: Authentication and authorization
+- name: Users
+  description: User profile operations
+- name: Tenants
+  description: Tenant management
+- name: Venues
+  description: Venue management
+- name: Resources
+  description: Venue resources
+- name: Bookings
+  description: Booking operations
+- name: Subscriptions
+  description: Subscription management
+- name: Statistics
+  description: Reporting and analytics
+
+paths:
+
+  /auth/login:
+    post:
+      tags: [Auth]
+      summary: Login user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+      responses:
+        "200":
+          description: Successful login
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoginResponse'
+  /auth/register:
+    post:
+      tags: [Auth]
+      summary: Register user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterRequest'
+      responses:
+        "200":
+          description: Successful register
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RegisterResponse'
+
+  /users/me:
+    get:
+      tags: [Users]
+      summary: Get current user profile
+      responses:
+        "200":
+          description: User profile
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserDto'
+    patch:
+      tags: [Users]
+      summary: Update current user profile
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpsertUserDto'
+      responses:
+        "200":
+          description: Updated user
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserDto'
+
+  /tenants:
+    get:
+      tags: [Tenants]
+      summary: Get all tenants (Admin only)
+      parameters:
+      - $ref: '#/components/parameters/PageParam'
+      - $ref: '#/components/parameters/SizeParam'
+      - $ref: '#/components/parameters/SortParam'
+      - name: dateFrom
+        in: query
+        description: Filter tenants created from this date (ISO 8601 format)
+        schema:
+          type: string
+          format: date
+      - name: dateTo
+        in: query
+        description: Filter tenants created up to this date (ISO 8601 format)
+        schema:
+          type: string
+          format: date
+      responses:
+        "200":
+          description: List of tenants
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageResponse'
+                  - type: object
+                    properties:
+                      content:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/TenantDto'
+
+    post:
+      tags: [Tenants]
+      summary: Create new tenant (Admin only)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpsertTenantDto'
+      responses:
+        "201":
+          description: Tenant created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TenantDto'
+
+  /tenants/{tenantId}:
+    get:
+      tags: [Tenants]
+      summary: Get tenant details
+      parameters:
+        - name: tenantId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "200":
+          description: Tenant details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TenantDto'
+    patch:
+      tags: [Tenants]
+      summary: Update tenant
+      parameters:
+        - name: tenantId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpsertTenantDto'
+      responses:
+        "200":
+          description: Updated tenant
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TenantDto'
+
+  /tenants/{tenantId}/status:
+    patch:
+      tags: [Tenants]
+      summary: Enable or disable tenant
+      parameters:
+        - name: tenantId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                active:
+                  type: boolean
+      responses:
+        "200":
+          description: Tenant status updated
+
+  /venues:
+    get:
+      tags: [Venues]
+      summary: Get all venues
+      parameters:
+      - $ref: '#/components/parameters/PageParam'
+      - $ref: '#/components/parameters/SizeParam'
+      - $ref: '#/components/parameters/SortParam'
+      - name: city
+        in: query
+        schema:
+          type: string
+      - name: type
+        in: query
+        schema:
+          type: string
+      - name: minPrice
+        in: query
+        schema:
+          type: number
+      - name: maxPrice
+        in: query
+        schema:
+          type: number
+      - name: hasParking
+        in: query
+        schema:
+          type: boolean
+      responses:
+        "200":
+          description: List of venues
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageResponse'
+                  - type: object
+                    properties:
+                      content:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/VenueDto'
+                          
+    post:
+      tags: [Venues]
+      summary: Create a venue
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpsertVenueDto'
+      responses:
+        "201":
+          description: Venue created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VenueDto'
+
+  /venues/{venueId}:
+    get:
+      tags: [Venues]
+      summary: Get venue details
+      parameters:
+        - name: venueId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "200":
+          description: Venue details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VenueDto'
+    patch:
+      tags: [Venues]
+      summary: Update venue
+      parameters:
+        - name: venueId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpsertVenueDto'
+      responses:
+        "200":
+          description: Updated venue
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VenueDto'
+
+  /resources:
+    get:
+      tags: [Resources]
+      summary: Get all resources
+      parameters:
+      - $ref: '#/components/parameters/PageParam'
+      - $ref: '#/components/parameters/SizeParam'
+      - $ref: '#/components/parameters/SortParam'
+      responses:
+        "200":
+          description: Paginated list of past bookings
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageResponse'
+                  - type: object
+                    properties:
+                      content:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/ResourceDto'
+
+          
+    post:
+      tags: [Resources]
+      summary: Create resource
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpsertResourceDto'
+      responses:
+        "201":
+          description: Resource created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResourceDto'
+
+  /bookings:
+    get:
+      tags: [Bookings]
+      summary: Get all bookings (Admin can filter by tenant)
+      responses:
+        "200":
+          description: List of bookings
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/BookingDto'
+    post:
+      tags: [Bookings]
+      summary: Create a booking
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpsertBookingDto'
+      responses:
+        "201":
+          description: Booking created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BookingDto'
+              
+  /bookings/tenants/{tenantId}:
+    get:
+      tags: [Bookings]
+      summary: Get all bookings for tenant
+      parameters:
+      - name: tenantId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      responses:
+        "200":
+          description: List of bookings
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/BookingDto'
+
+  /bookings/me/upcoming:
+    get:
+      tags: [Bookings]
+      summary: Get upcoming bookings for current user
+      parameters:
+      - $ref: '#/components/parameters/PageParam'
+      - $ref: '#/components/parameters/SizeParam'
+      - $ref: '#/components/parameters/SortParam'
+      responses:
+        "200":
+          description: List of upcoming bookings
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageResponse'
+                  - type: object
+                    properties:
+                      content:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/BookingDto'
+
+  /bookings/me/history:
+    get:
+      tags: [Bookings]
+      summary: Get past bookings for current user
+      parameters:
+      - $ref: '#/components/parameters/PageParam'
+      - $ref: '#/components/parameters/SizeParam'
+      - $ref: '#/components/parameters/SortParam'
+      responses:
+        "200":
+          description: Paginated list of past bookings
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageResponse'
+                  - type: object
+                    properties:
+                      content:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/BookingDto'
+
+
+
+  /subscriptions:
+    get:
+      tags: [Subscriptions]
+      summary: Get all subscriptions
+      responses:
+        "200":
+          description: List of subscriptions
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SubscriptionDto'
+
+
+  /subscriptions/tenants/{tenantId}:
+    get:
+      tags: [Subscriptions]
+      summary: Get all subscriptions for tenant
+      parameters:
+      - name: tenantId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      responses:
+        "200":
+          description: List of subscriptions for tenant
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SubscriptionDto'
+
+  /subscriptions/{subscriptionId}:
+    get:
+      tags: [Subscriptions]
+      summary: Get subscriptions details
+      parameters:
+      - name: subscriptionId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      responses:
+        "200":
+          description: Subscription details
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SubscriptionDto'
+
+  /statistics/tenants/{tenantId}:
+    get:
+      tags: [Statistics]
+      summary: Get statistics for a tenant
+      parameters:
+        - name: tenantId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "200":
+          description: Tenant statistics
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TenantStatisticsDto'
+
+  /statistics/system:
+    get:
+      tags: [Statistics]
+      summary: Get system-wide statistics (Admin only)
+      responses:
+        "200":
+          description: System statistics
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SystemStatisticsDto'
+
+components:
+  parameters:
+    PageParam:
+      name: page
+      in: query
+      schema:
+        type: integer
+        minimum: 0
+        default: 0
+    SizeParam:
+      name: size
+      in: query
+      schema:
+        type: integer
+        minimum: 1
+        maximum: 100
+        default: 20
+    SortParam:
+      name: sort
+      in: query
+      schema:
+        type: string
+        example: createdAt,desc
+  schemas:
+    LoginRequest:
+      type: object
+    LoginResponse:
+      type: object
+    RegisterRequest:
+      type: object
+    RegisterResponse:
+      type: object
+    UserDto:
+      type: object
+    UpsertUserDto:
+      type: object
+    TenantDto:
+      type: object
+    UpsertTenantDto:
+      type: object
+    VenueDto:
+      type: object
+    UpsertVenueDto:
+      type: object
+    ResourceDto:
+      type: object
+    UpsertResourceDto:
+      type: object
+    BookingDto:
+      type: object
+    UpsertBookingDto:
+      type: object
+    SubscriptionDto:
+      type: object
+    TenantStatisticsDto:
+      type: object
+    SystemStatisticsDto:
+      type: object
+    PageResponse:
+      type: object
+      properties:
+        content:
+          type: array
+          items: 
+            type: object
+        page:
+          type: integer
+        size:
+          type: integer
+        totalElements:
+          type: integer
+        totalPages:
+          type: integer
+        first:
+          type: boolean
+        last:
+          type: boolean

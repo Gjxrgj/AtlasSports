@@ -1,0 +1,934 @@
+openapi: 3.0.0
+info:
+  title: Atlas Sports API
+  version: 1.0.0
+servers:
+- url: http://localhost:8080/api
+tags:
+- description: Authentication and authorization
+  name: Auth
+- description: User profile operations
+  name: Users
+- description: Tenant management
+  name: Tenants
+- description: Venue management
+  name: Venues
+- description: Venue resources
+  name: Resources
+- description: Booking operations
+  name: Bookings
+- description: Subscription management
+  name: Subscriptions
+- description: Reporting and analytics
+  name: Statistics
+paths:
+  /auth/login:
+    post:
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LoginRequest"
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LoginResponse"
+          description: Successful login
+      summary: Login user
+      tags:
+      - Auth
+      x-content-type: application/json
+      x-accepts:
+      - application/json
+      x-tags:
+      - tag: Auth
+  /auth/register:
+    post:
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RegisterRequest"
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RegisterResponse"
+          description: Successful register
+      summary: Register user
+      tags:
+      - Auth
+      x-content-type: application/json
+      x-accepts:
+      - application/json
+      x-tags:
+      - tag: Auth
+  /users/me:
+    get:
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserDto"
+          description: User profile
+      summary: Get current user profile
+      tags:
+      - Users
+      x-accepts:
+      - application/json
+      x-tags:
+      - tag: Users
+    patch:
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpsertUserDto"
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserDto"
+          description: Updated user
+      summary: Update current user profile
+      tags:
+      - Users
+      x-content-type: application/json
+      x-accepts:
+      - application/json
+      x-tags:
+      - tag: Users
+  /tenants:
+    get:
+      parameters:
+      - explode: true
+        in: query
+        name: page
+        required: false
+        schema:
+          default: 0
+          minimum: 0
+          type: integer
+        style: form
+      - explode: true
+        in: query
+        name: size
+        required: false
+        schema:
+          default: 20
+          maximum: 100
+          minimum: 1
+          type: integer
+        style: form
+      - explode: true
+        in: query
+        name: sort
+        required: false
+        schema:
+          example: "createdAt,desc"
+          type: string
+        style: form
+      - description: Filter tenants created from this date (ISO 8601 format)
+        explode: true
+        in: query
+        name: dateFrom
+        required: false
+        schema:
+          format: date
+          type: string
+        style: form
+      - description: Filter tenants created up to this date (ISO 8601 format)
+        explode: true
+        in: query
+        name: dateTo
+        required: false
+        schema:
+          format: date
+          type: string
+        style: form
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/_tenants_get_200_response"
+          description: List of tenants
+      summary: Get all tenants (Admin only)
+      tags:
+      - Tenants
+      x-accepts:
+      - application/json
+      x-tags:
+      - tag: Tenants
+    post:
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpsertTenantDto"
+        required: true
+      responses:
+        "201":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TenantDto"
+          description: Tenant created
+      summary: Create new tenant (Admin only)
+      tags:
+      - Tenants
+      x-content-type: application/json
+      x-accepts:
+      - application/json
+      x-tags:
+      - tag: Tenants
+  /tenants/{tenantId}:
+    get:
+      parameters:
+      - explode: false
+        in: path
+        name: tenantId
+        required: true
+        schema:
+          format: uuid
+          type: string
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TenantDto"
+          description: Tenant details
+      summary: Get tenant details
+      tags:
+      - Tenants
+      x-accepts:
+      - application/json
+      x-tags:
+      - tag: Tenants
+    patch:
+      parameters:
+      - explode: false
+        in: path
+        name: tenantId
+        required: true
+        schema:
+          format: uuid
+          type: string
+        style: simple
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpsertTenantDto"
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TenantDto"
+          description: Updated tenant
+      summary: Update tenant
+      tags:
+      - Tenants
+      x-content-type: application/json
+      x-accepts:
+      - application/json
+      x-tags:
+      - tag: Tenants
+  /tenants/{tenantId}/status:
+    patch:
+      parameters:
+      - explode: false
+        in: path
+        name: tenantId
+        required: true
+        schema:
+          format: uuid
+          type: string
+        style: simple
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/_tenants__tenantId__status_patch_request"
+        required: true
+      responses:
+        "200":
+          description: Tenant status updated
+      summary: Enable or disable tenant
+      tags:
+      - Tenants
+      x-content-type: application/json
+      x-accepts:
+      - application/json
+      x-tags:
+      - tag: Tenants
+  /venues:
+    get:
+      parameters:
+      - explode: true
+        in: query
+        name: page
+        required: false
+        schema:
+          default: 0
+          minimum: 0
+          type: integer
+        style: form
+      - explode: true
+        in: query
+        name: size
+        required: false
+        schema:
+          default: 20
+          maximum: 100
+          minimum: 1
+          type: integer
+        style: form
+      - explode: true
+        in: query
+        name: sort
+        required: false
+        schema:
+          example: "createdAt,desc"
+          type: string
+        style: form
+      - explode: true
+        in: query
+        name: city
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: true
+        in: query
+        name: type
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: true
+        in: query
+        name: minPrice
+        required: false
+        schema:
+          type: number
+        style: form
+      - explode: true
+        in: query
+        name: maxPrice
+        required: false
+        schema:
+          type: number
+        style: form
+      - explode: true
+        in: query
+        name: hasParking
+        required: false
+        schema:
+          type: boolean
+        style: form
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/_venues_get_200_response"
+          description: List of venues
+      summary: Get all venues
+      tags:
+      - Venues
+      x-accepts:
+      - application/json
+      x-tags:
+      - tag: Venues
+    post:
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpsertVenueDto"
+        required: true
+      responses:
+        "201":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/VenueDto"
+          description: Venue created
+      summary: Create a venue
+      tags:
+      - Venues
+      x-content-type: application/json
+      x-accepts:
+      - application/json
+      x-tags:
+      - tag: Venues
+  /venues/{venueId}:
+    get:
+      parameters:
+      - explode: false
+        in: path
+        name: venueId
+        required: true
+        schema:
+          format: uuid
+          type: string
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/VenueDto"
+          description: Venue details
+      summary: Get venue details
+      tags:
+      - Venues
+      x-accepts:
+      - application/json
+      x-tags:
+      - tag: Venues
+    patch:
+      parameters:
+      - explode: false
+        in: path
+        name: venueId
+        required: true
+        schema:
+          format: uuid
+          type: string
+        style: simple
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpsertVenueDto"
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/VenueDto"
+          description: Updated venue
+      summary: Update venue
+      tags:
+      - Venues
+      x-content-type: application/json
+      x-accepts:
+      - application/json
+      x-tags:
+      - tag: Venues
+  /resources:
+    get:
+      parameters:
+      - explode: true
+        in: query
+        name: page
+        required: false
+        schema:
+          default: 0
+          minimum: 0
+          type: integer
+        style: form
+      - explode: true
+        in: query
+        name: size
+        required: false
+        schema:
+          default: 20
+          maximum: 100
+          minimum: 1
+          type: integer
+        style: form
+      - explode: true
+        in: query
+        name: sort
+        required: false
+        schema:
+          example: "createdAt,desc"
+          type: string
+        style: form
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/_resources_get_200_response"
+          description: Paginated list of past bookings
+      summary: Get all resources
+      tags:
+      - Resources
+      x-accepts:
+      - application/json
+      x-tags:
+      - tag: Resources
+    post:
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpsertResourceDto"
+        required: true
+      responses:
+        "201":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ResourceDto"
+          description: Resource created
+      summary: Create resource
+      tags:
+      - Resources
+      x-content-type: application/json
+      x-accepts:
+      - application/json
+      x-tags:
+      - tag: Resources
+  /bookings:
+    get:
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: "#/components/schemas/BookingDto"
+                type: array
+          description: List of bookings
+      summary: Get all bookings (Admin can filter by tenant)
+      tags:
+      - Bookings
+      x-accepts:
+      - application/json
+      x-tags:
+      - tag: Bookings
+    post:
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpsertBookingDto"
+        required: true
+      responses:
+        "201":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BookingDto"
+          description: Booking created
+      summary: Create a booking
+      tags:
+      - Bookings
+      x-content-type: application/json
+      x-accepts:
+      - application/json
+      x-tags:
+      - tag: Bookings
+  /bookings/tenants/{tenantId}:
+    get:
+      parameters:
+      - explode: false
+        in: path
+        name: tenantId
+        required: true
+        schema:
+          format: uuid
+          type: string
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: "#/components/schemas/BookingDto"
+                type: array
+          description: List of bookings
+      summary: Get all bookings for tenant
+      tags:
+      - Bookings
+      x-accepts:
+      - application/json
+      x-tags:
+      - tag: Bookings
+  /bookings/me/upcoming:
+    get:
+      parameters:
+      - explode: true
+        in: query
+        name: page
+        required: false
+        schema:
+          default: 0
+          minimum: 0
+          type: integer
+        style: form
+      - explode: true
+        in: query
+        name: size
+        required: false
+        schema:
+          default: 20
+          maximum: 100
+          minimum: 1
+          type: integer
+        style: form
+      - explode: true
+        in: query
+        name: sort
+        required: false
+        schema:
+          example: "createdAt,desc"
+          type: string
+        style: form
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/_bookings_me_upcoming_get_200_response"
+          description: List of upcoming bookings
+      summary: Get upcoming bookings for current user
+      tags:
+      - Bookings
+      x-accepts:
+      - application/json
+      x-tags:
+      - tag: Bookings
+  /bookings/me/history:
+    get:
+      parameters:
+      - explode: true
+        in: query
+        name: page
+        required: false
+        schema:
+          default: 0
+          minimum: 0
+          type: integer
+        style: form
+      - explode: true
+        in: query
+        name: size
+        required: false
+        schema:
+          default: 20
+          maximum: 100
+          minimum: 1
+          type: integer
+        style: form
+      - explode: true
+        in: query
+        name: sort
+        required: false
+        schema:
+          example: "createdAt,desc"
+          type: string
+        style: form
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/_bookings_me_upcoming_get_200_response"
+          description: Paginated list of past bookings
+      summary: Get past bookings for current user
+      tags:
+      - Bookings
+      x-accepts:
+      - application/json
+      x-tags:
+      - tag: Bookings
+  /subscriptions:
+    get:
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: "#/components/schemas/SubscriptionDto"
+                type: array
+          description: List of subscriptions
+      summary: Get all subscriptions
+      tags:
+      - Subscriptions
+      x-accepts:
+      - application/json
+      x-tags:
+      - tag: Subscriptions
+  /subscriptions/tenants/{tenantId}:
+    get:
+      parameters:
+      - explode: false
+        in: path
+        name: tenantId
+        required: true
+        schema:
+          format: uuid
+          type: string
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: "#/components/schemas/SubscriptionDto"
+                type: array
+          description: List of subscriptions for tenant
+      summary: Get all subscriptions for tenant
+      tags:
+      - Subscriptions
+      x-accepts:
+      - application/json
+      x-tags:
+      - tag: Subscriptions
+  /subscriptions/{subscriptionId}:
+    get:
+      parameters:
+      - explode: false
+        in: path
+        name: subscriptionId
+        required: true
+        schema:
+          format: uuid
+          type: string
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: "#/components/schemas/SubscriptionDto"
+                type: array
+          description: Subscription details
+      summary: Get subscriptions details
+      tags:
+      - Subscriptions
+      x-accepts:
+      - application/json
+      x-tags:
+      - tag: Subscriptions
+  /statistics/tenants/{tenantId}:
+    get:
+      parameters:
+      - explode: false
+        in: path
+        name: tenantId
+        required: true
+        schema:
+          format: uuid
+          type: string
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TenantStatisticsDto"
+          description: Tenant statistics
+      summary: Get statistics for a tenant
+      tags:
+      - Statistics
+      x-accepts:
+      - application/json
+      x-tags:
+      - tag: Statistics
+  /statistics/system:
+    get:
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SystemStatisticsDto"
+          description: System statistics
+      summary: Get system-wide statistics (Admin only)
+      tags:
+      - Statistics
+      x-accepts:
+      - application/json
+      x-tags:
+      - tag: Statistics
+components:
+  parameters:
+    PageParam:
+      explode: true
+      in: query
+      name: page
+      required: false
+      schema:
+        default: 0
+        minimum: 0
+        type: integer
+      style: form
+    SizeParam:
+      explode: true
+      in: query
+      name: size
+      required: false
+      schema:
+        default: 20
+        maximum: 100
+        minimum: 1
+        type: integer
+      style: form
+    SortParam:
+      explode: true
+      in: query
+      name: sort
+      required: false
+      schema:
+        example: "createdAt,desc"
+        type: string
+      style: form
+  schemas:
+    LoginRequest:
+      type: object
+    LoginResponse:
+      type: object
+    RegisterRequest:
+      type: object
+    RegisterResponse:
+      type: object
+    UserDto:
+      type: object
+    UpsertUserDto:
+      type: object
+    TenantDto:
+      type: object
+    UpsertTenantDto:
+      type: object
+    VenueDto:
+      type: object
+    UpsertVenueDto:
+      type: object
+    ResourceDto:
+      type: object
+    UpsertResourceDto:
+      type: object
+    BookingDto:
+      type: object
+    UpsertBookingDto:
+      type: object
+    SubscriptionDto:
+      type: object
+    TenantStatisticsDto:
+      type: object
+    SystemStatisticsDto:
+      type: object
+    PageResponse:
+      properties:
+        content:
+          items:
+            type: object
+          type: array
+        page:
+          type: integer
+        size:
+          type: integer
+        totalElements:
+          type: integer
+        totalPages:
+          type: integer
+        first:
+          type: boolean
+        last:
+          type: boolean
+      type: object
+    _tenants_get_200_response:
+      allOf:
+      - $ref: "#/components/schemas/PageResponse"
+      - properties:
+          content:
+            items:
+              $ref: "#/components/schemas/TenantDto"
+            type: array
+        type: object
+      example:
+        size: 6
+        last: true
+        totalPages: 5
+        page: 0
+        content:
+        - null
+        - null
+        first: true
+        totalElements: 1
+    _tenants__tenantId__status_patch_request:
+      properties:
+        active:
+          type: boolean
+      type: object
+    _venues_get_200_response:
+      allOf:
+      - $ref: "#/components/schemas/PageResponse"
+      - properties:
+          content:
+            items:
+              $ref: "#/components/schemas/VenueDto"
+            type: array
+        type: object
+      example:
+        size: 6
+        last: true
+        totalPages: 5
+        page: 0
+        content:
+        - null
+        - null
+        first: true
+        totalElements: 1
+    _resources_get_200_response:
+      allOf:
+      - $ref: "#/components/schemas/PageResponse"
+      - properties:
+          content:
+            items:
+              $ref: "#/components/schemas/ResourceDto"
+            type: array
+        type: object
+      example:
+        size: 6
+        last: true
+        totalPages: 5
+        page: 0
+        content:
+        - null
+        - null
+        first: true
+        totalElements: 1
+    _bookings_me_upcoming_get_200_response:
+      allOf:
+      - $ref: "#/components/schemas/PageResponse"
+      - properties:
+          content:
+            items:
+              $ref: "#/components/schemas/BookingDto"
+            type: array
+        type: object
+      example:
+        size: 6
+        last: true
+        totalPages: 5
+        page: 0
+        content:
+        - null
+        - null
+        first: true
+        totalElements: 1
