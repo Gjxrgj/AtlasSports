@@ -1,4 +1,5 @@
 package atlassports.model.dto;
+import atlassports.enums.EntityStatus;
 import lombok.Data;
 
 import java.time.LocalDateTime;
@@ -8,6 +9,6 @@ public class UpsertTenantDto {
     private Long userId;
     private String name;
     private String phoneNumber;
-    private LocalDateTime status;
+    private EntityStatus status;
     private Boolean deleted;
 }
