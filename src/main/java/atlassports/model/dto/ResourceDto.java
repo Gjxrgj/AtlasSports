@@ -4,7 +4,7 @@ import atlassports.enums.EntityStatus;
 import lombok.Data;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 
 @Data
 public class ResourceDto {
@@ -15,6 +15,6 @@ public class ResourceDto {
     private EntityStatus status;
     private Integer capacity;
     private Boolean defaultResource;
-    private LocalDateTime createdAt;
-    private LocalDateTime modifiedAt;
+    private OffsetDateTime createdAt;
+    private OffsetDateTime modifiedAt;
 }

@@ -1,11 +1,12 @@
 package atlassports.model;
 
+import atlassports.enums.EntityStatus;
 import jakarta.persistence.*;
 import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 
 @Entity
 @Data
@@ -18,9 +19,12 @@ public class Tenant {
     private String name;
     private String phoneNumber;
     @CreationTimestamp
-    private LocalDateTime createdAt;
+    @Column(nullable = false, updatable = false)
+    private OffsetDateTime createdAt;
     @UpdateTimestamp
-    private LocalDateTime modifiedAt;
-    private LocalDateTime status;
+    @Column(nullable = false)
+    private OffsetDateTime modifiedAt;
+    @Enumerated(EnumType.STRING)
+    private EntityStatus status;
     private Boolean deleted;
 }

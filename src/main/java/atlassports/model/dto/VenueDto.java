@@ -3,7 +3,7 @@ package atlassports.model.dto;
 import atlassports.enums.EntityStatus;
 import lombok.Data;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 
 @Data
 public class VenueDto {
@@ -14,8 +14,8 @@ public class VenueDto {
     private String phoneNumber;
     private String email;
     private String description;
-    private LocalDateTime createdAt;
-    private LocalDateTime modifiedAt;
+    private OffsetDateTime createdAt;
+    private OffsetDateTime modifiedAt;
     private EntityStatus status;
     private Boolean deleted;
 }

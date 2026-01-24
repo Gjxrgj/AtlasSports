@@ -6,13 +6,14 @@ import lombok.Data;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.Currency;
 
 @Data
 public class SubscriptionDto {
     private Long id;
     private Long tenantId;
-    private LocalDateTime createdAt;
+    private OffsetDateTime createdAt;
     private LocalDateTime startDate;
     private LocalDateTime endDate;
     private BigDecimal price;

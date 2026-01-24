@@ -5,9 +5,11 @@ import atlassports.enums.SubscriptionStatus;
 import jakarta.persistence.*;
 import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.Currency;
 
 @Entity
@@ -19,7 +21,11 @@ public class Subscription {
     @ManyToOne(fetch = FetchType.LAZY)
     private Tenant tenant;
     @CreationTimestamp
-    private LocalDateTime createdAt;
+    @Column(nullable = false, updatable = false)
+    private OffsetDateTime createdAt;
+    @UpdateTimestamp
+    @Column(nullable = false)
+    private OffsetDateTime modifiedAt;
     private LocalDateTime startDate;
     private LocalDateTime endDate;
     private BigDecimal price;
