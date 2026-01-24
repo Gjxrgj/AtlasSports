@@ -8,6 +8,7 @@ import java.util.Map;
 
 @Data
 public class RevenueStatisticsDto {
+    private BigDecimal allTimeTotalRevenue;
     private BigDecimal previousYear;
     private BigDecimal previousMonth;
     private Map<Integer, BigDecimal> quarterly;

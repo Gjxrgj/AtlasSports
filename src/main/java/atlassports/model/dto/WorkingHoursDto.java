@@ -3,8 +3,8 @@ package atlassports.model.dto;
 import lombok.Data;
 
 import java.time.DayOfWeek;
-import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.OffsetDateTime;
 
 @Data
 public class WorkingHoursDto {
@@ -14,6 +14,6 @@ public class WorkingHoursDto {
     private LocalTime openTime;
     private LocalTime closeTime;
     private Boolean closed;
-    private LocalDateTime createdAt;
-    private LocalDateTime modifiedAt;
+    private OffsetDateTime createdAt;
+    private OffsetDateTime modifiedAt;
 }

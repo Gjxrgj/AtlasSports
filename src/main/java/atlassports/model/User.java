@@ -1,13 +1,14 @@
 package atlassports.model;
 
-import lombok.Data;
-
 import jakarta.persistence.*;
+import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.Collection;
 import java.util.List;
 
@@ -23,8 +24,12 @@ public class User implements UserDetails {
     private String lastName;
     private String email;
     private String password;
-    private LocalDateTime createdAt;
-    private LocalDateTime modifiedAt;
+    @CreationTimestamp
+    @Column(nullable = false, updatable = false)
+    private OffsetDateTime createdAt;
+    @UpdateTimestamp
+    @Column(nullable = false)
+    private OffsetDateTime modifiedAt;
     private Boolean deleted = false;
     @ManyToMany(fetch = FetchType.EAGER)
     private List<Role> roles;
@@ -33,7 +38,7 @@ public class User implements UserDetails {
     private boolean credentialsNonExpired = true;
     private boolean enabled = true;
 
-    public User(String firstName, String lastName, String email, String password, LocalDateTime createdAt, LocalDateTime modifiedAt, List<Role> roles) {
+    public User(String firstName, String lastName, String email, String password, OffsetDateTime createdAt, OffsetDateTime modifiedAt, List<Role> roles) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;

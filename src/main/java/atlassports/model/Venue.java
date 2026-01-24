@@ -6,7 +6,8 @@ import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
+import java.util.List;
 
 @Entity
 @Data
@@ -21,10 +22,14 @@ public class Venue {
     private String phoneNumber;
     private String email;
     private String description;
+    @ManyToMany
+    List<SportType> sportTypes;
     @CreationTimestamp
-    private LocalDateTime createdAt;
+    @Column(nullable = false, updatable = false)
+    private OffsetDateTime createdAt;
     @UpdateTimestamp
-    private LocalDateTime modifiedAt;
+    @Column(nullable = false)
+    private OffsetDateTime modifiedAt;
     @Enumerated(EnumType.STRING)
     private EntityStatus status;
     private Boolean deleted;

@@ -1,9 +1,8 @@
 package atlassports.model.dto;
 
-import atlassports.enums.RoleEnum;
 import lombok.Data;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.List;
 
 @Data
@@ -12,8 +11,8 @@ public class UserDto {
     private String firstName;
     private String lastName;
     private String email;
-    private LocalDateTime createdAt;
-    private LocalDateTime modifiedAt;
+    private OffsetDateTime createdAt;
+    private OffsetDateTime modifiedAt;
     private Boolean deleted;
     private List<Long> roleIds;
     private boolean accountNonExpired;

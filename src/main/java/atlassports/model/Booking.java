@@ -8,6 +8,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 
 @Entity
 @Data
@@ -24,7 +25,9 @@ public class Booking {
     @Enumerated(EnumType.STRING)
     private BookingStatus status;
     @CreationTimestamp
-    private LocalDateTime createdAt;
+    @Column(nullable = false, updatable = false)
+    private OffsetDateTime createdAt;
     @UpdateTimestamp
-    private LocalDateTime modifiedAt;
+    @Column(nullable = false)
+    private OffsetDateTime modifiedAt;
 }

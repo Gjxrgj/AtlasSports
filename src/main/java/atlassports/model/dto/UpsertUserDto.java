@@ -2,6 +2,7 @@ package atlassports.model.dto;
 
 import lombok.Data;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Data
@@ -10,8 +11,8 @@ public class UpsertUserDto {
     private String lastName;
     private String email;
     private String password;
-    private List<Long> roleIds;
-    private Boolean deleted;
+    private List<Long> roleIds = new ArrayList<>();
+    private Boolean deleted = false;
     private boolean accountNonExpired = true;
     private boolean accountNonLocked = true;
     private boolean credentialsNonExpired = true;
