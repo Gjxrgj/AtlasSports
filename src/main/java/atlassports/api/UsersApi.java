@@ -5,6 +5,8 @@
  */
 package atlassports.api;
 
+import atlassports.model.dto.PatchUserDto;
+import atlassports.model.dto.UserDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -54,7 +56,7 @@ public interface UsersApi {
             value = UsersApi.PATH_USERS_ME_GET,
             produces = {"application/json"}
     )
-    default ResponseEntity<Object> usersMeGet(
+    default ResponseEntity<UserDto> usersMeGet(
 
     ) {
         return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
@@ -86,8 +88,8 @@ public interface UsersApi {
             produces = {"application/json"},
             consumes = {"application/json"}
     )
-    default ResponseEntity<Object> usersMePatch(
-            @Parameter(name = "body", description = "", required = true) @Valid @RequestBody Object body
+    default ResponseEntity<UserDto> usersMePatch(
+            @Parameter(name = "body", description = "", required = true) @Valid @RequestBody PatchUserDto body
     ) {
         return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
 
