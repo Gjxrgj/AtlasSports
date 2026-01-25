@@ -5,8 +5,9 @@
  */
 package atlassports.api;
 
-import atlassports.model.openapi.TenantsGet200Response;
-import atlassports.model.openapi.TenantsTenantIdStatusPatchRequest;
+import atlassports.enums.EntityStatus;
+import atlassports.model.dto.TenantDto;
+import atlassports.model.dto.UpsertTenantDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
@@ -15,22 +16,19 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.Max;
-import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
-import org.springframework.format.annotation.DateTimeFormat;
+import org.springdoc.core.annotations.ParameterObject;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.lang.Nullable;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.NativeWebRequest;
 
 import javax.annotation.processing.Generated;
-import java.time.LocalDate;
 import java.util.Optional;
-import java.util.UUID;
 
 @Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2025-12-24T16:37:25.216838800+01:00[Europe/Skopje]", comments = "Generator version: 7.18.0")
 @Validated
@@ -59,7 +57,7 @@ public interface TenantsApi {
             tags = {"Tenants"},
             responses = {
                     @ApiResponse(responseCode = "200", description = "List of tenants", content = {
-                            @Content(mediaType = "application/json", schema = @Schema(implementation = TenantsGet200Response.class))
+                            @Content(mediaType = "application/json", schema = @Schema(implementation = Page.class))
                     })
             }
     )
@@ -68,12 +66,9 @@ public interface TenantsApi {
             value = TenantsApi.PATH_TENANTS_GET,
             produces = {"application/json"}
     )
-    default ResponseEntity<TenantsGet200Response> tenantsGet(
-            @Min(value = 0) @Parameter(name = "page", description = "", in = ParameterIn.QUERY) @Valid @RequestParam(value = "page", required = false, defaultValue = "0") Integer page,
-            @Min(value = 1) @Max(value = 100) @Parameter(name = "size", description = "", in = ParameterIn.QUERY) @Valid @RequestParam(value = "size", required = false, defaultValue = "20") Integer size,
-            @Parameter(name = "sort", description = "", in = ParameterIn.QUERY) @Valid @RequestParam(value = "sort", required = false) @Nullable String sort,
-            @Parameter(name = "dateFrom", description = "Filter tenants created from this date (ISO 8601 format)", in = ParameterIn.QUERY) @Valid @RequestParam(value = "dateFrom", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) @Nullable LocalDate dateFrom,
-            @Parameter(name = "dateTo", description = "Filter tenants created up to this date (ISO 8601 format)", in = ParameterIn.QUERY) @Valid @RequestParam(value = "dateTo", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) @Nullable LocalDate dateTo
+    default ResponseEntity<Page<TenantDto>> tenantsGet(
+            @ParameterObject Pageable pageable,
+            @RequestParam(required = false) String searchQuery
     ) {
         getRequest().ifPresent(request -> {
             for (MediaType mediaType : MediaType.parseMediaTypes(request.getHeader("Accept"))) {
@@ -113,8 +108,8 @@ public interface TenantsApi {
             produces = {"application/json"},
             consumes = {"application/json"}
     )
-    default ResponseEntity<Object> tenantsPost(
-            @Parameter(name = "body", description = "", required = true) @Valid @RequestBody Object body
+    default ResponseEntity<TenantDto> tenantsPost(
+            @Parameter(name = "body", description = "", required = true) @Valid @RequestBody UpsertTenantDto body
     ) {
         return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
 
@@ -144,8 +139,8 @@ public interface TenantsApi {
             value = TenantsApi.PATH_TENANTS_TENANT_ID_GET,
             produces = {"application/json"}
     )
-    default ResponseEntity<Object> tenantsTenantIdGet(
-            @NotNull @Parameter(name = "tenantId", description = "", required = true, in = ParameterIn.PATH) @PathVariable("tenantId") UUID tenantId
+    default ResponseEntity<TenantDto> tenantsTenantIdGet(
+            @NotNull @Parameter(name = "tenantId", description = "", required = true, in = ParameterIn.PATH) @PathVariable("tenantId") Long tenantId
     ) {
         return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
 
@@ -177,9 +172,9 @@ public interface TenantsApi {
             produces = {"application/json"},
             consumes = {"application/json"}
     )
-    default ResponseEntity<Object> tenantsTenantIdPatch(
-            @NotNull @Parameter(name = "tenantId", description = "", required = true, in = ParameterIn.PATH) @PathVariable("tenantId") UUID tenantId,
-            @Parameter(name = "body", description = "", required = true) @Valid @RequestBody Object body
+    default ResponseEntity<TenantDto> tenantsTenantIdPatch(
+            @NotNull @Parameter(name = "tenantId", description = "", required = true, in = ParameterIn.PATH) @PathVariable("tenantId") Long tenantId,
+            @Parameter(name = "body", description = "", required = true) @Valid @RequestBody UpsertTenantDto body
     ) {
         return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
 
@@ -208,9 +203,9 @@ public interface TenantsApi {
             value = TenantsApi.PATH_TENANTS_TENANT_ID_STATUS_PATCH,
             consumes = {"application/json"}
     )
-    default ResponseEntity<Void> tenantsTenantIdStatusPatch(
-            @NotNull @Parameter(name = "tenantId", description = "", required = true, in = ParameterIn.PATH) @PathVariable("tenantId") UUID tenantId,
-            @Parameter(name = "TenantsTenantIdStatusPatchRequest", description = "", required = true) @Valid @RequestBody TenantsTenantIdStatusPatchRequest tenantsTenantIdStatusPatchRequest
+    default ResponseEntity<TenantDto> tenantsTenantIdStatusPatch(
+            @NotNull @Parameter(name = "tenantId", description = "", required = true, in = ParameterIn.PATH) @PathVariable("tenantId") Long tenantId,
+            @Parameter(name = "status", description = "", required = true) @Valid @RequestBody EntityStatus status
     ) {
         return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
 

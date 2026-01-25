@@ -26,5 +26,5 @@ public class Tenant {
     private OffsetDateTime modifiedAt;
     @Enumerated(EnumType.STRING)
     private EntityStatus status;
-    private Boolean deleted;
+    private Boolean deleted = false;
 }
