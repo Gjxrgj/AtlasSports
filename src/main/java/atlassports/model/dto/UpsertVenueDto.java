@@ -19,5 +19,4 @@ public class UpsertVenueDto {
     private String email;
     private String description;
     private EntityStatus status;
-    private Boolean deleted;
 }
