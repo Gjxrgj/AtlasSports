@@ -6,6 +6,7 @@ import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
+import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.util.List;
 
@@ -19,6 +20,12 @@ public class Venue {
     private Tenant tenant;
     private String name;
     private String address;
+    private BigDecimal longitude;
+    private BigDecimal latitude;
+    private String country;
+    private String city;
+    private Boolean hasParking;
+    private Boolean isIndoor;
     private String phoneNumber;
     private String email;
     private String description;
