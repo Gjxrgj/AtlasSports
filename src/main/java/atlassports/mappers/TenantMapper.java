@@ -17,9 +17,18 @@ public interface TenantMapper {
 
     List<TenantDto> toDto(List<Tenant> tenants);
 
-    @Mapping(source = "userId", target = "user.id")
+    @Mapping(target = "deleted", ignore = true)
+    @Mapping(target = "createdAt", ignore = true)
+    @Mapping(target = "modifiedAt", ignore = true)
+    @Mapping(target = "user", ignore = true)
+    @Mapping(target = "id", ignore = true)
     Tenant toEntity(UpsertTenantDto dto);
 
-    @Mapping(source = "userId", target = "user.id")
+    @Mapping(target = "user", ignore = true)
+    @Mapping(target = "deleted", ignore = true)
+    @Mapping(target = "createdAt", ignore = true)
+    @Mapping(target = "modifiedAt", ignore = true)
+    @Mapping(target = "status", ignore = true)
+    @Mapping(target = "id", ignore = true)
     Tenant toEntity(UpsertTenantDto dto, @MappingTarget Tenant tenant);
 }
