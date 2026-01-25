@@ -20,8 +20,10 @@ public class Venue {
     private Tenant tenant;
     private String name;
     private String address;
-    private BigDecimal longitude;
+    @Column(name = "latitude", precision = 10, scale = 8)
     private BigDecimal latitude;
+    @Column(name = "longitude", precision = 11, scale = 8)
+    private BigDecimal longitude;
     private String country;
     private String city;
     private Boolean hasParking;
@@ -39,5 +41,5 @@ public class Venue {
     private OffsetDateTime modifiedAt;
     @Enumerated(EnumType.STRING)
     private EntityStatus status;
-    private Boolean deleted;
+    private Boolean deleted = false;
 }

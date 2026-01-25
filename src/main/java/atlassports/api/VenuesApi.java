@@ -7,7 +7,7 @@ package atlassports.api;
 
 import atlassports.model.dto.UpsertVenueDto;
 import atlassports.model.dto.VenueDto;
-import atlassports.model.openapi.VenuesGet200Response;
+import atlassports.model.dto.VenueFilter;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
@@ -16,21 +16,19 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.Max;
-import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
+import org.springdoc.core.annotations.ParameterObject;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.lang.Nullable;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.NativeWebRequest;
 
 import javax.annotation.processing.Generated;
-import java.math.BigDecimal;
 import java.util.Optional;
-import java.util.UUID;
 
 @Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2025-12-24T16:37:25.216838800+01:00[Europe/Skopje]", comments = "Generator version: 7.18.0")
 @Validated
@@ -62,7 +60,7 @@ public interface VenuesApi {
             tags = {"Venues"},
             responses = {
                     @ApiResponse(responseCode = "200", description = "List of venues", content = {
-                            @Content(mediaType = "application/json", schema = @Schema(implementation = VenuesGet200Response.class))
+                            @Content(mediaType = "application/json", schema = @Schema(implementation = Page.class))
                     })
             }
     )
@@ -71,15 +69,8 @@ public interface VenuesApi {
             value = VenuesApi.PATH_VENUES_GET,
             produces = {"application/json"}
     )
-    default ResponseEntity<VenuesGet200Response> venuesGet(
-            @Min(value = 0) @Parameter(name = "page", description = "", in = ParameterIn.QUERY) @Valid @RequestParam(value = "page", required = false, defaultValue = "0") Integer page,
-            @Min(value = 1) @Max(value = 100) @Parameter(name = "size", description = "", in = ParameterIn.QUERY) @Valid @RequestParam(value = "size", required = false, defaultValue = "20") Integer size,
-            @Parameter(name = "sort", description = "", in = ParameterIn.QUERY) @Valid @RequestParam(value = "sort", required = false) @Nullable String sort,
-            @Parameter(name = "city", description = "", in = ParameterIn.QUERY) @Valid @RequestParam(value = "city", required = false) @Nullable String city,
-            @Parameter(name = "type", description = "", in = ParameterIn.QUERY) @Valid @RequestParam(value = "type", required = false) @Nullable String type,
-            @Parameter(name = "minPrice", description = "", in = ParameterIn.QUERY) @Valid @RequestParam(value = "minPrice", required = false) @Nullable BigDecimal minPrice,
-            @Parameter(name = "maxPrice", description = "", in = ParameterIn.QUERY) @Valid @RequestParam(value = "maxPrice", required = false) @Nullable BigDecimal maxPrice,
-            @Parameter(name = "hasParking", description = "", in = ParameterIn.QUERY) @Valid @RequestParam(value = "hasParking", required = false) @Nullable Boolean hasParking
+    default ResponseEntity<Page<VenueDto>> venuesGet(
+            @ParameterObject Pageable pageable, @ParameterObject VenueFilter venueFilter
     ) {
         getRequest().ifPresent(request -> {
             for (MediaType mediaType : MediaType.parseMediaTypes(request.getHeader("Accept"))) {

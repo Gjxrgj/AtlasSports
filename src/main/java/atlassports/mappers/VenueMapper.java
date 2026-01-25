@@ -17,9 +17,10 @@ public interface VenueMapper {
 
     List<VenueDto> toDto(List<Venue> venues);
 
-    @Mapping(source = "tenantId", target = "tenant.id")
+    @Mapping(target = "tenant", ignore = true)
     Venue toEntity(UpsertVenueDto dto);
 
-    @Mapping(source = "tenantId", target = "tenant.id")
+    @Mapping(target = "tenant", ignore = true)
     Venue toEntity(UpsertVenueDto dto, @MappingTarget Venue venue);
+
 }
