@@ -5,6 +5,8 @@
  */
 package atlassports.api;
 
+import atlassports.model.dto.UpsertVenueDto;
+import atlassports.model.dto.VenueDto;
 import atlassports.model.openapi.VenuesGet200Response;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -117,8 +119,8 @@ public interface VenuesApi {
             produces = {"application/json"},
             consumes = {"application/json"}
     )
-    default ResponseEntity<Object> venuesPost(
-            @Parameter(name = "body", description = "", required = true) @Valid @RequestBody Object body
+    default ResponseEntity<VenueDto> venuesPost(
+            @Parameter(name = "body", description = "", required = true) @Valid @RequestBody UpsertVenueDto body
     ) {
         return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
 
@@ -148,8 +150,8 @@ public interface VenuesApi {
             value = VenuesApi.PATH_VENUES_VENUE_ID_GET,
             produces = {"application/json"}
     )
-    default ResponseEntity<Object> venuesVenueIdGet(
-            @NotNull @Parameter(name = "venueId", description = "", required = true, in = ParameterIn.PATH) @PathVariable("venueId") UUID venueId
+    default ResponseEntity<VenueDto> venuesVenueIdGet(
+            @NotNull @Parameter(name = "venueId", description = "", required = true, in = ParameterIn.PATH) @PathVariable("venueId") Long venueId
     ) {
         return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
 
@@ -181,9 +183,9 @@ public interface VenuesApi {
             produces = {"application/json"},
             consumes = {"application/json"}
     )
-    default ResponseEntity<Object> venuesVenueIdPatch(
-            @NotNull @Parameter(name = "venueId", description = "", required = true, in = ParameterIn.PATH) @PathVariable("venueId") UUID venueId,
-            @Parameter(name = "body", description = "", required = true) @Valid @RequestBody Object body
+    default ResponseEntity<VenueDto> venuesVenueIdPatch(
+            @NotNull @Parameter(name = "venueId", description = "", required = true, in = ParameterIn.PATH) @PathVariable("venueId") Long venueId,
+            @Parameter(name = "body", description = "", required = true) @Valid @RequestBody UpsertVenueDto body
     ) {
         return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
 
