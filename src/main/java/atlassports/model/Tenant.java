@@ -14,6 +14,8 @@ public class Tenant {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    @Column(unique = true)
+    private String stripeCustomerId;
     @OneToOne
     private User user;
     private String name;

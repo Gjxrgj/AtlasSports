@@ -1,6 +1,7 @@
 package atlassports.service;
 
 import atlassports.enums.EntityStatus;
+import atlassports.model.Tenant;
 import atlassports.model.dto.TenantDto;
 import atlassports.model.dto.UpsertTenantDto;
 import org.springframework.data.domain.Page;
@@ -16,4 +17,6 @@ public interface TenantService {
     TenantDto updateTenant(Long tenantId, UpsertTenantDto body);
 
     TenantDto changeTenantStatus(Long tenantId, EntityStatus status);
+
+    Tenant getCurrentTenant();
 }

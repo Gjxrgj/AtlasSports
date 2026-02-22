@@ -6,9 +6,11 @@ import atlassports.model.Tenant;
 import atlassports.model.User;
 import atlassports.model.dto.TenantDto;
 import atlassports.model.dto.UpsertTenantDto;
+import atlassports.model.dto.UserDto;
 import atlassports.repository.TenantRepository;
 import atlassports.repository.UserRepository;
 import atlassports.service.TenantService;
+import atlassports.service.UserService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -22,11 +24,13 @@ public class TenantServiceImpl implements TenantService {
     private final TenantRepository tenantRepository;
     private final TenantMapper tenantMapper;
     private final UserRepository userRepository;
+    private final UserService userService;
 
-    public TenantServiceImpl(TenantRepository tenantRepository, TenantMapper tenantMapper, UserRepository userRepository) {
+    public TenantServiceImpl(TenantRepository tenantRepository, TenantMapper tenantMapper, UserRepository userRepository, UserService userService) {
         this.tenantRepository = tenantRepository;
         this.tenantMapper = tenantMapper;
         this.userRepository = userRepository;
+        this.userService = userService;
     }
 
     @Override
@@ -77,6 +81,13 @@ public class TenantServiceImpl implements TenantService {
         tenant.setStatus(status);
         Tenant savedTenant = tenantRepository.save(tenant);
         return tenantMapper.toDto(savedTenant);
+    }
+
+    @Override
+    public Tenant getCurrentTenant() {
+        UserDto user = userService.getMe();
+
+        return tenantRepository.findByUser_Id(user.getId()).orElseThrow(() -> new NoSuchElementException("Tenant for user with id: " + user.getId() + "not found."));
     }
 
     private Tenant findTenantByIdOrThrowException(Long tenantId) {
