@@ -5,6 +5,7 @@
  */
 package atlassports.api;
 
+import atlassports.model.dto.SubscriptionDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
@@ -14,6 +15,9 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.constraints.NotNull;
+import org.springdoc.core.annotations.ParameterObject;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -24,9 +28,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.context.request.NativeWebRequest;
 
 import javax.annotation.processing.Generated;
-import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
 @Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2025-12-24T16:37:25.216838800+01:00[Europe/Skopje]", comments = "Generator version: 7.18.0")
 @Validated
@@ -59,8 +61,8 @@ public interface SubscriptionsApi {
             value = SubscriptionsApi.PATH_SUBSCRIPTIONS_GET,
             produces = {"application/json"}
     )
-    default ResponseEntity<List<Object>> subscriptionsGet(
-
+    default ResponseEntity<Page<SubscriptionDto>> subscriptionsGet(
+            @ParameterObject Pageable pageable
     ) {
         getRequest().ifPresent(request -> {
             for (MediaType mediaType : MediaType.parseMediaTypes(request.getHeader("Accept"))) {
@@ -99,8 +101,8 @@ public interface SubscriptionsApi {
             value = SubscriptionsApi.PATH_SUBSCRIPTIONS_SUBSCRIPTION_ID_GET,
             produces = {"application/json"}
     )
-    default ResponseEntity<List<Object>> subscriptionsSubscriptionIdGet(
-            @NotNull @Parameter(name = "subscriptionId", description = "", required = true, in = ParameterIn.PATH) @PathVariable("subscriptionId") UUID subscriptionId
+    default ResponseEntity<SubscriptionDto> subscriptionsSubscriptionIdGet(
+            @NotNull @Parameter(name = "subscriptionId", description = "", required = true, in = ParameterIn.PATH) @PathVariable("subscriptionId") Long subscriptionId
     ) {
         getRequest().ifPresent(request -> {
             for (MediaType mediaType : MediaType.parseMediaTypes(request.getHeader("Accept"))) {
@@ -139,8 +141,9 @@ public interface SubscriptionsApi {
             value = SubscriptionsApi.PATH_SUBSCRIPTIONS_TENANTS_TENANT_ID_GET,
             produces = {"application/json"}
     )
-    default ResponseEntity<List<Object>> subscriptionsTenantsTenantIdGet(
-            @NotNull @Parameter(name = "tenantId", description = "", required = true, in = ParameterIn.PATH) @PathVariable("tenantId") UUID tenantId
+    default ResponseEntity<Page<SubscriptionDto>> subscriptionsTenantsTenantIdGet(
+            @ParameterObject Pageable pageable,
+            @NotNull @Parameter(name = "tenantId", description = "", required = true, in = ParameterIn.PATH) @PathVariable("tenantId") Long tenantId
     ) {
         getRequest().ifPresent(request -> {
             for (MediaType mediaType : MediaType.parseMediaTypes(request.getHeader("Accept"))) {
