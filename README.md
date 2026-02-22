@@ -6,30 +6,30 @@
 
 ---
 
-## 🚀 Features
+##  Features
 
-### 🔐 Authentication & Authorization
+###  Authentication & Authorization
 - JWT-based authentication with refresh tokens
 - Role-based access control: **Admin**, **Tenant**, **Client**
 - Secure tenant isolation across all resources
 
-### 📅 Booking & Scheduling System
+###  Booking & Scheduling System
 - Calendar-based time slot selection
 - Real-time availability tracking
 - Double-booking prevention
 - Transactional reservations and payments
 
-### 💳 Subscription & Billing
+###  Subscription & Billing
 - Stripe integration with webhooks
 - Automated renewals, expirations, and invoicing
 - Subscription-based access control for tenants
 
-### ⚡ Real-Time Updates
+###  Real-Time Updates
 - Live synchronization of bookings and availability
 - Implemented via **WebSockets / SSE**
 - Immediate updates across tenant dashboards and client views
 
-### 🧠 Event-Driven Architecture
+###  Event-Driven Architecture
 - Microservices communicating via **Kafka / RabbitMQ**
 - Asynchronous handling of:
   - Bookings
@@ -37,14 +37,14 @@
   - Notifications
   - Analytics
 
-### 🔍 High-Performance Search
+###  High-Performance Search
 - Venue discovery by:
   - Sport
   - Location
   - Availability
 - Powered by **PostgreSQL Full-Text Search / Elasticsearch**
 
-### 🚄 Performance & Reliability
+###  Performance & Reliability
 - Redis caching layer
 - Rate limiting for abuse protection
 - Background jobs for:
@@ -53,7 +53,7 @@
   - Notifications
   - Maintenance tasks
 
-### 📊 Analytics & Dashboards
+###  Analytics & Dashboards
 - Tenant and admin dashboards
 - Metrics include:
   - Bookings
@@ -62,7 +62,7 @@
   - Operational performance
 - Interactive charts and insights
 
-### 📈 Observability & Monitoring
+###  Observability & Monitoring
 - Full monitoring stack:
   - **Prometheus** – metrics
   - **Grafana** – visualization
@@ -72,7 +72,7 @@
 
 ---
 
-## 🧱 Architecture
+##  Architecture
 
 - **Backend:** Java, Spring Boot, Microservices
 - **Frontend:** React
@@ -85,7 +85,7 @@
 
 ---
 
-## 🏗️ System Design Highlights
+##  System Design Highlights
 
 - Fully multi-tenant with strict data isolation
 - Event-driven workflows for scalability and fault tolerance
@@ -95,7 +95,7 @@
 
 ---
 
-## 📦 Status
+##  Status
 
 **2025 – Present**  
 Actively developed and evolving as a full-scale SaaS product.
